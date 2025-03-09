@@ -1,0 +1,75 @@
+#include <nRF24L01.h>
+#include <printf.h>
+#include <RF24.h>
+#include <RF24_config.h>
+
+#include <SPI.h> 
+#include <nRF24L01.h>
+#include <RF24.h>
+RF24 radio(7, 8);    
+const byte address[6] = "00001";
+int A_1A =A2;
+int A_1B =A1;
+int B_1A =A4;
+int B_1B =A3;
+
+int A_1A2 =9;
+int A_1B2 =10;
+int B_1A2 =1;
+int B_1B2 =2;
+
+int speed = 255;
+
+void setup() {
+  Serial.begin(9600);
+  radio.begin();
+  radio.openReadingPipe(0, address);
+  radio.setPALevel(RF24_PA_MIN); 
+
+  radio.startListening();   
+    pinMode(A_1A, OUTPUT);
+  pinMode(A_1B, OUTPUT);
+  pinMode(B_1A, OUTPUT);
+  pinMode(B_1B, OUTPUT);
+   
+
+}
+void loop() {
+  if (radio.available()) {
+    char text[32];
+    char text0;   
+    radio.read(&text, sizeof(text)); 
+    Serial.println(text);
+    text0 = text[0];
+    switch(text0){
+      case 'w':
+      analogWrite(A_1A, speed);
+    analogWrite(A_1B, 0);   
+    //모터B
+    analogWrite(B_1A, speed);
+    analogWrite(B_1B, 0); 
+  break;
+  case 's':
+  analogWrite(A_1A, 0);
+    analogWrite(A_1B, speed);   
+    //모터B
+    analogWrite(B_1A, 0);
+    analogWrite(B_1B, speed); 
+    break;
+    case 'a':
+  analogWrite(A_1A, 0);
+    analogWrite(A_1B,speed);   
+    //모터B
+    analogWrite(B_1A, speed);
+    analogWrite(B_1B, 0); 
+    break;
+    case 'd':
+  analogWrite(A_1A, speed);
+    analogWrite(A_1B,0);   
+    //모터B
+    analogWrite(B_1A, 0);
+    analogWrite(B_1B, speed); 
+    break;
+    }
+}
+  }
